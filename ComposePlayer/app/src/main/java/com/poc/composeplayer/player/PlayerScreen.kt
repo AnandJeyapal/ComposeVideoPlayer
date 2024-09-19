@@ -1,18 +1,32 @@
 package com.poc.composeplayer.player
 
-import android.net.Uri
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.media3.common.MediaItem
+import com.poc.composeplayer.data.mediaItems
 
 @Composable
 fun PlayerScreen(modifier: Modifier = Modifier) {
-    val mediaItem =
-        MediaItem.fromUri(Uri.parse("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"))
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        VideoPlayer(mediaItem = mediaItem)
+    val playerMediaItems = mediaItems
+    var mediaItemIndex by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+    Column(modifier = modifier.fillMaxSize()) {
+        VideoPlayer(playerMediaItem = playerMediaItems[mediaItemIndex])
+        LazyColumn {
+            items(playerMediaItems.size) {
+                MediaItemRow(
+                    modifier = Modifier.clickable { mediaItemIndex = it },
+                    mediaItem = playerMediaItems[it]
+                )
+            }
+        }
     }
 }
